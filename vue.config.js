@@ -2,7 +2,9 @@ const path = require('path')
 const vantTheme = path.resolve(__dirname, "./src/assets/less/vantChange.less")
 
 module.exports = {
-  publicPath: './',
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/chatroom/'
+    : '/',
   productionSourceMap: false,
   css: {
     loaderOptions: {
