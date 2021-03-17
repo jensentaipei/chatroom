@@ -5,6 +5,9 @@ const routes = [
   {
     path: '/',
     name: 'ListView',
+    meta: {
+      keepAlive: true
+    },
     component: ListView
   },
   {

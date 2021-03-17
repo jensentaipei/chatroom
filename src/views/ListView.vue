@@ -21,6 +21,7 @@
 </template>
 
 <script>
+// import { onActivated } from '@vue/runtime-core';
 import RoomList from '@/components/RoomList.vue'
 import { useRouter } from "vue-router";
 

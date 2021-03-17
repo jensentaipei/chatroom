@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { onMounted,onUnmounted, reactive } from '@vue/runtime-core'
+import { onMounted, reactive } from '@vue/runtime-core'
 import { db } from '../db'
 import timeFormat from '../timeFormat.js';
 
@@ -55,11 +55,11 @@ export default {
             listenList();
         })
 
-        onUnmounted(()=>{
-            if(unsubscribe){
-                unsubscribe();
-            }
-        })
+        // onUnmounted(()=>{
+        //     if(unsubscribe){
+        //         unsubscribe();
+        //     }
+        // })
 
         async function onRefresh() {
             listenList().then(()=>{

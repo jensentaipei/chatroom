@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="true">
     <div>
       <van-dialog :show="show" confirm-button-text="確認" confirm-button-color="#1d1e22" @confirm="check">
         <template #title>
@@ -12,7 +12,13 @@
         </template>
       </van-dialog>
     </div>
-    <router-view/>
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component"  v-if="$route.meta.keepAlive"/>
+      </keep-alive>
+      <component :is="Component"  v-if="!$route.meta.keepAlive"/>
+    </router-view> 
+    <!-- <router-view/> -->
   </div>
 </template>
 

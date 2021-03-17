@@ -3,13 +3,13 @@
         <div>
             <div class="header">
                 <van-sticky>
-                    <van-nav-bar left-text="Chat">
+                    <van-nav-bar left-arrow @click-left="onClickLeft">
                         <template #title>
-                            <span style="font-size:30px;">{{roomName}}</span>
+                            <span style="font-size:28px;font-family:Comic Sans MS;color:white">{{roomName}}</span>
                         </template>
-                        <template #right>
+                        <!-- <template #right>
                             <van-icon name="chat-o" size="3rem" />
-                        </template>
+                        </template> -->
                     </van-nav-bar>
                 </van-sticky>
             </div>
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import { onMounted,reactive,ref } from '@vue/runtime-core';
-import { useRoute } from 'vue-router';
+import { onMounted,onUnmounted,reactive,ref } from '@vue/runtime-core';
+import { useRoute ,useRouter} from 'vue-router';
 import { db } from '../db';
 import timeFormat from '../timeFormat.js';
 import cookie from '../cookie.js';
@@ -64,9 +64,10 @@ export default {
     name: 'ChatRoom',
 
     setup() {
-        const { getCookie:getCookie } = cookie();
+        const { getCookie } = cookie();
         const { timestamp2Date } = timeFormat();
         const route = useRoute();
+        const router = useRouter()
         const firestore = db.firestore();
         
         const id = route.params.id
@@ -84,6 +85,12 @@ export default {
                 roomName.value = r;
             });
         });
+
+        onUnmounted(()=>{
+            if(unsubscribe){
+                unsubscribe();
+            }
+        })
 
         function listenList(id) {
             return new Promise(function(resolve){
@@ -140,13 +147,18 @@ export default {
             })
         }
 
+        function onClickLeft() {
+            router.go(-1);
+        }
+
         return {
             message,
             timestamp2Date,
             user,
             inputMsg,
             updateMsg,
-            roomName
+            roomName,
+            onClickLeft
         }
     }
 }
