@@ -12,11 +12,6 @@
         </template>
       </van-dialog>
     </div>
-    <div class="header">
-      <van-sticky>
-        <Header></Header>
-      </van-sticky>
-    </div>
     <router-view/>
   </div>
 </template>
@@ -25,40 +20,43 @@
 import { computed, onMounted, ref } from '@vue/runtime-core'
 import { useRouter } from "vue-router";
 import cookie from './cookie.js';
-import Header from '@/components/Header.vue'
 // import { useStore } from 'vuex';
 
 export default {
-  components: {
-    Header
-  },
-
   setup() {
     // const store = useStore();
     const { getCookie,setCookie } = cookie();
 
     const router = useRouter();
     const inputVal = ref('');
-    const user = ref('default');
+    const userCheck = ref(true);
 
     const show = computed(()=>{
-      if(user.value === ''){
+      if(!userCheck.value){
         router.push({ name: 'ListView'});
         return true;
       } else return false;
     })
 
     onMounted(()=>{
-      user.value = getCookie('user') ? getCookie('user') : '';
+      userCheck.value = getCookie('user') ? true : false;
+      intervalID;
     })
 
     function check() {
       const bool =  inputVal.value === '' ? false : true;
       if(bool){
         setCookie('user',inputVal.value);
-        user.value = inputVal.value;
+        inputVal.value = '';
+        userCheck.value = true;
       }
     }
+
+    const intervalID = setInterval(function() {
+      if(!getCookie('user')){
+        userCheck.value = false;
+      }
+    }, 10000);
 
     return {
       show,

@@ -1,13 +1,24 @@
 <template>
     <div>
+        <div>
+            <div class="header">
+                <van-sticky>
+                    <van-nav-bar left-text="Chat">
+                        <template #title>
+                            <span style="font-size:30px;">{{roomName}}</span>
+                        </template>
+                        <template #right>
+                            <van-icon name="chat-o" size="3rem" />
+                        </template>
+                    </van-nav-bar>
+                </van-sticky>
+            </div>
+        </div>
         <div class="chat">
-            <!-- <div class="pop">
-                <p>123456</p>
-            </div> -->
             <div v-for="msg in message.value" :key="msg.id">
                 <div v-if="msg.user != user">
                     <div class="messageBox">
-                        <img src="../assets/image/user.jpg" class="messageBox__user">
+                        <img src="../assets/image/user.png" class="messageBox__user">
                         <div class="messageBox__content">
                             <div class="messageBox__name">{{msg.user}}</div>
                             <div class="messageBox__message">
@@ -64,12 +75,14 @@ export default {
         const message = reactive([]);
         const user = ref('');
         const inputMsg = ref('');
+        const roomName = ref('');
 
         onMounted(() => {
             listenList(id);
             user.value = getCookie('user');
-            var container = document.querySelector(".chat");
-            container.scrollTop = container.scrollHeight;
+            getRoomInfo().then((r)=>{
+                roomName.value = r;
+            });
         });
 
         function listenList(id) {
@@ -92,7 +105,7 @@ export default {
 
         function updateMsg (){
             const now = new Date();
-            const ref = firestore.collection('ChatRoom').doc(id).collection('message'); // add() 是針對集合使用
+            const ref = firestore.collection('ChatRoom').doc(id); // add() 是針對集合使用
 
             const tmpMsg = inputMsg.value;
             inputMsg.value = '';
@@ -101,13 +114,30 @@ export default {
                 return;
             }
 
-            ref.add({
+            ref.collection('message').add({
                 insdt: now,
                 msg: tmpMsg,
                 user: user.value
             }).then(() => {
                 console.log('send msg success');
             });
+
+            ref.update({
+                lastMsg:tmpMsg,
+                lastMsgTime:now
+            }).then(() => {
+                console.log('update data successful');
+            });
+        }
+
+        function getRoomInfo() {
+            return new Promise (function(resolve) {
+                const ref = firestore.collection('ChatRoom').doc(id);
+                ref.get().then(doc => {
+                    const tmpName = doc.data().roomName;
+                    resolve(tmpName)
+                });
+            })
         }
 
         return {
@@ -115,7 +145,8 @@ export default {
             timestamp2Date,
             user,
             inputMsg,
-            updateMsg
+            updateMsg,
+            roomName
         }
     }
 }
@@ -165,7 +196,7 @@ export default {
     .messageBox__name {
         margin: 5px 0px 5px 5px;
         font-size: 13px;
-        color: #727C8A;
+        color: #ACB0B8;
         vertical-align: top;
         cursor: pointer;
     }
@@ -206,7 +237,7 @@ export default {
     }
     .messageBox__time {
         transform: scale(0.7);
-        color: #ACB0B8;
+        color: #727C8A;
         vertical-align: bottom;
         margin: 0px 0px 5px -12px;
         display: inline-block;
@@ -258,7 +289,11 @@ export default {
         background-color: 	#535353;
         min-height: 1000px;
     }
-    .inputBottom{
+    .inputBottom {
         position:-webkit-sticky; position:sticky; bottom:0;
+    }
+    ::v-deep(.van-nav-bar__text){
+        font-size: 25px;
+        font-family: 'Comic Sans MS';
     }
 </style>

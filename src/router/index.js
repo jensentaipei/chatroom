@@ -19,10 +19,10 @@ const router = createRouter({
   routes
 })
 
-// router.beforeEach(() => {
-//   if(!getCookie('user')){
-//     router.push({name:'Login'});
-//   }
+// router.afterEach(() => {
+  // if(!getCookie('user')){
+  //   router.push({name:'Login'});
+  // }
 // })
 
 export default router

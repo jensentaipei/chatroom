@@ -1,5 +1,16 @@
 <template>
     <div>
+        <div>
+            <div class="header">
+                <van-sticky>
+                    <van-nav-bar left-text="Chat">
+                        <template #right>
+                            <van-icon name="chat-o" size="3rem" />
+                        </template>
+                    </van-nav-bar>
+                </van-sticky>
+            </div>
+        </div>
         <div class="searchBar">
 
         </div>
@@ -36,5 +47,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+    ::v-deep(.van-nav-bar__text){
+        font-size: 25px;
+        font-family: 'Comic Sans MS';
+    }
 </style>
