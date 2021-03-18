@@ -8,7 +8,12 @@
             </template>
             <template #label>
                 <div style="text-align:left;font-size:14px;padding-left:10px;color:#c8c9cc">
-                    {{item.lastMsg}}
+                    <span v-if="item.lastMsg">
+                        {{item.lastMsg}}
+                    </span>
+                    <span v-else>
+                        &nbsp;
+                    </span>
                 </div>
             </template>
             <template #extra>
