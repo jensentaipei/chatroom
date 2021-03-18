@@ -52,7 +52,9 @@ export default {
         });
 
         onMounted(()=>{
-            listenList();
+            listenList().then(()=>{
+               emit("loadingFinish");
+            });
         })
 
         // onUnmounted(()=>{

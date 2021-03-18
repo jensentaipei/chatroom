@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="true">
+  <div>
     <div>
       <van-dialog :show="show" confirm-button-text="確認" confirm-button-color="#1d1e22" @confirm="check">
         <template #title>
