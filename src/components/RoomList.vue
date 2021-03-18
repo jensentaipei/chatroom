@@ -1,33 +1,22 @@
 <template>
     <div class="list">
-        <van-pull-refresh v-model="state.refreshing" @refresh="onRefresh">
-            <template #loosing>
-                <i class="el-icon-loading"></i>
+        <van-cell v-for="item in roomList.value" :key="item.id" @click="clickRoom(item.id)">
+            <template #title>
+                <div style="text-align:left;font-size:18px;font-family: serif;color:white;">
+                    {{item.roomName}}
+                </div>
             </template>
-            <template #pulling>
-                <i class="el-icon-refresh-left"></i>
+            <template #label>
+                <div style="text-align:left;font-size:14px;padding-left:10px;color:#c8c9cc">
+                    {{item.lastMsg}}
+                </div>
             </template>
-            <template #loading>
-                <i class="el-icon-loading"></i>
+            <template #extra>
+                <div style="text-align:right;font-size:10px;color:#c8c9cc">
+                    {{timestamp2Date(item.lastMsgTime.seconds)}}
+                </div>
             </template>
-            <van-cell v-for="item in roomList.value" :key="item.id" @click="clickRoom(item.id)">
-                <template #title>
-                    <div style="text-align:left;font-size:18px;font-family: serif;color:white;">
-                        {{item.roomName}}
-                    </div>
-                </template>
-                <template #label>
-                    <div style="text-align:left;font-size:14px;padding-left:10px;color:#c8c9cc">
-                        {{item.lastMsg}}
-                    </div>
-                </template>
-                <template #extra>
-                    <div style="text-align:right;font-size:10px;color:#c8c9cc">
-                        {{timestamp2Date(item.lastMsgTime.seconds)}}
-                    </div>
-                </template>
-            </van-cell>
-        </van-pull-refresh>
+        </van-cell>
     </div>
 </template>
 
@@ -39,17 +28,13 @@ import timeFormat from '../timeFormat.js';
 export default {
     name: 'RoomList',
 
-    setup(props, { emit }) {
+    setup(_, { emit }) {
         const { timestamp2Date } = timeFormat();
 
         const roomList = reactive([]);
         const firestore = db.firestore();
 
         let unsubscribe;
-
-        const state = reactive({
-            refreshing: false,
-        });
 
         onMounted(()=>{
             listenList().then(()=>{
@@ -62,12 +47,6 @@ export default {
         //         unsubscribe();
         //     }
         // })
-
-        async function onRefresh() {
-            listenList().then(()=>{
-                state.refreshing = false;
-            });
-        }
 
         function listenList() {
             return new Promise(function(resolve){
@@ -98,10 +77,8 @@ export default {
         }
 
         return {
-            onRefresh,
             roomList,
             timestamp2Date,
-            state,
             clickRoom
         }
     }

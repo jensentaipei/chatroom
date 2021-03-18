@@ -1,20 +1,20 @@
 <template>
     <div>
-        <div>
-            <div class="header">
-                <van-sticky>
-                    <van-nav-bar left-arrow @click-left="onClickLeft">
-                        <template #title>
-                            <span style="font-size:28px;font-family:Comic Sans MS;color:white">{{roomName}}</span>
-                        </template>
-                        <!-- <template #right>
-                            <van-icon name="chat-o" size="3rem" />
-                        </template> -->
-                    </van-nav-bar>
-                </van-sticky>
-            </div>
+        <div id="header">
+            <van-nav-bar left-arrow @click-left="onClickLeft">
+                <template #title>
+                    <span style="font-size:28px;font-family:Comic Sans MS;color:white">{{roomName}}</span>
+                </template>
+                <!-- <template #right>
+                    <van-icon name="chat-o" size="3rem" />
+                </template> -->
+            </van-nav-bar>
         </div>
-        <div class="chat">
+
+        <div id="chat"
+            v-loading="onloading"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)">
             <div v-for="msg in message.value" :key="msg.id">
                 <div v-if="msg.user != user">
                     <div class="messageBox">
@@ -46,10 +46,11 @@
                 </div>
             </div>
         </div>
-        <div class="inputBottom">
+
+        <div id="inputBottom">
             <van-field v-model="inputMsg" placeholder="輸入訊息內容" @keyup.enter="updateMsg" />
         </div>
-        
+        <span id="page-bottom"></span>
     </div>  
 </template>
 
@@ -77,9 +78,23 @@ export default {
         const user = ref('');
         const inputMsg = ref('');
         const roomName = ref('');
+        const onloading = ref(true);
+
 
         onMounted(() => {
-            listenList(id);
+            const height = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+            const headerHeight = document.querySelector('#header').clientHeight;
+            const inputBottomHeight = document.querySelector('#inputBottom').clientHeight;
+            const chat = document.querySelector('#chat').style;
+            chat.minHeight = `${height - (headerHeight + inputBottomHeight)}px`;
+            chat.paddingTop = `${headerHeight}px`;
+            chat.paddingBottom = `${inputBottomHeight}px`;
+
+            listenList(id).then(()=>{
+                let pageBottom = document.querySelector('#page-bottom');
+                pageBottom.scrollIntoView();
+                onloading.value = false;
+            });
             user.value = getCookie('user');
             getRoomInfo().then((r)=>{
                 roomName.value = r;
@@ -158,7 +173,8 @@ export default {
             inputMsg,
             updateMsg,
             roomName,
-            onClickLeft
+            onClickLeft,
+            onloading
         }
     }
 }
@@ -297,15 +313,26 @@ export default {
     .messageBox--self .messageBox__time {
         margin: 0px -16px 5px 0px;
     }
-    .chat{
-        background-color: 	#535353;
-        min-height: 1000px;
+    #header{
+        position: fixed;
+        width: 100%;
+        z-index: 100;
     }
-    .inputBottom {
-        position:-webkit-sticky; position:sticky; bottom:0;
+    #chat{
+        background-color: 	#535353;
+        /* z-index: 99; */
+    }
+    #inputBottom {
+        position: fixed;
+        width: 100%;
+        z-index: 100;
+        bottom:0;
     }
     ::v-deep(.van-nav-bar__text){
         font-size: 25px;
         font-family: 'Comic Sans MS';
+    }
+    ::v-deep(.el-icon-loading){
+        color: white;
     }
 </style>

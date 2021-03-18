@@ -1,25 +1,21 @@
 <template>
     <div>
-
-        <div class="header">
-            <van-sticky>
-                <van-nav-bar left-text="Chat">
-                    <template #right>
-                        <van-icon name="chat-o" size="3rem" @click="show=true" />
-                    </template>
-                </van-nav-bar>
-            </van-sticky>
+        <div id="header">
+            <van-nav-bar left-text="Chat">
+                <template #right>
+                    <van-icon name="chat-o" size="3rem" @click="show=true" />
+                </template>
+            </van-nav-bar>
         </div>
         
         <div class="searchBar">
 
         </div>
 
-        <div
-            v-loading="loading"
+        <div id="list"
+            v-loading="onloading"
             element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(105, 105, 105, 0.8)"
-            style="background-color:#969799;">
+            element-loading-background="rgba(0, 0, 0, 0.8)">
             <RoomList @clickRoom="toRoom" @loadingFinish="toFinish"></RoomList>
         </div>
 
@@ -39,7 +35,7 @@
 </template>
 
 <script>
-import { ref  } from '@vue/runtime-core';
+import { ref,onMounted  } from '@vue/runtime-core';
 import RoomList from '@/components/RoomList.vue'
 import { useRouter } from "vue-router";
 import { db } from '../db';
@@ -56,16 +52,24 @@ export default {
         const router = useRouter();
         const firestore = db.firestore();
 
-        const loading = ref(true);
+        const onloading = ref(true);
         const show = ref(false);
         const inputVal = ref('');
+
+        onMounted(() => {
+            const height = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+            const headerHeight = document.querySelector('#header').clientHeight;
+            const list = document.querySelector('#list').style;
+            list.minHeight = `${height - headerHeight}px`;
+            list.paddingTop = `${headerHeight}px`;
+        })
 
         function toRoom(id){
             router.push({ name: 'ChatRoom', params: { id: id } });
         }
 
         function toFinish(){
-            loading.value = false;
+            onloading.value = false;
         }
         
         function addRoom(){
@@ -95,11 +99,11 @@ export default {
         return {
             toRoom,
             toFinish,
-            loading,
             addRoom,
             show,
             cancelRoom,
-            inputVal
+            inputVal,
+            onloading
         }
     }
 }
@@ -119,5 +123,13 @@ export default {
     }
     ::v-deep(.van-dialog__cancel){
        background-color: #969799;
+    }
+    #header{
+        position: fixed;
+        width: 100%;
+        z-index: 100;
+    }
+    #list {
+        background-color:	#969799;
     }
 </style>
