@@ -91,9 +91,10 @@ export default {
             chat.paddingBottom = `${inputBottomHeight}px`;
 
             listenList(id).then(()=>{
-                let pageBottom = document.querySelector('#page-bottom');
-                pageBottom.scrollIntoView();
+                // let pageBottom = document.querySelector('#page-bottom');
+                // pageBottom.scrollIntoView();
                 onloading.value = false;
+                window.scrollTo( 0, height +  headerHeight + inputBottomHeight);
             });
             user.value = getCookie('user');
             getRoomInfo().then((r)=>{
